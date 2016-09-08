@@ -15,7 +15,6 @@ public class IOSQLite {
 	
 	init(databasePath: String) throws {
 		
-		self.logger = logger
 		self.databasePath = databasePath
 		
 		let dbStatus = sqlite3_open(self.databasePath, self.databaseHandle)

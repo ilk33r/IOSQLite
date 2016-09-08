@@ -18,9 +18,6 @@ public struct IOSQLiteEntity {
 	}
 	
 	private var activeRecord: IOSQLiteActiveRecord?
-	private var orders = [(String, ORDER_TYPES)]()
-	private var maxRows = -1
-	private var startRow = -1
 	
 	public init (tableName: String) {
 		
@@ -30,28 +27,13 @@ public struct IOSQLiteEntity {
 	
 	public func addSelect(singleColumn columnName: String) {
 		
-		self.activeRecord!.addSelect(selectData: (self.getTableName, columnName))
+		let selectData = IOSQLiteSelect(tableName: self.getTableName, columnName: columnName, isDistinct: false)
+		self.activeRecord!.addSelect(selectData: selectData)
 	}
 	
-	public func addSelect(singleColumnOtherTable tableName: String, columnName: String) {
+	public func addSelect(select selectData: IOSQLiteSelect) {
 		
-		self.activeRecord!.addSelect(selectData: (tableName, columnName))
-	}
-	
-	public func addSelect(withColumns columns: [String]) {
-		
-		for column in columns {
-			
-			self.activeRecord!.addSelect(selectData: (self.getTableName, column))
-		}
-	}
-	
-	public func addSelect(columnsOtherTable tableName: String, columns: [String]) {
-		
-		for column in columns {
-			
-			self.activeRecord!.addSelect(selectData: (tableName, column))
-		}
+		self.activeRecord!.addSelect(selectData: selectData)
 	}
 	
 	public func addWhere(withColumn columnName: String) {
@@ -66,16 +48,9 @@ public struct IOSQLiteEntity {
 		self.activeRecord!.addWhere(whereData: whereDataType)
 	}
 	
-	public func addWhere(withColumnOtherTable tableName: String, columnName: String) {
+	public func addWhere(withTypeOtherTable whereData: IOSQLiteWhere) {
 		
-		let whereDataType = IOSQLiteWhere(tableName: tableName, columnName: columnName, comparsionType: IOSQLiteWhere.COMPARSION_TYPES.EQUAL, whereType: IOSQLiteWhere.WHERE_TYPES.AND)
-		self.activeRecord!.addWhere(whereData: whereDataType)
-	}
-	
-	public func addWhere(withTypeOtherTable tableName: String, columnName: String, comparsionType: IOSQLiteWhere.COMPARSION_TYPES, whereType: IOSQLiteWhere.WHERE_TYPES) {
-		
-		let whereDataType = IOSQLiteWhere(tableName: tableName, columnName: columnName, comparsionType: comparsionType, whereType: whereType)
-		self.activeRecord!.addWhere(whereData: whereDataType)
+		self.activeRecord!.addWhere(whereData: whereData)
 	}
 	
 	public func addWhere(withGroup whereData: [IOSQLiteWhere]) {
@@ -83,38 +58,112 @@ public struct IOSQLiteEntity {
 		self.activeRecord!.addWhereGroup(whereDatas: whereData)
 	}
 	
-	public mutating func setParam(integerParam paramValue: Int) {
+	public func setParam(ioSQLiteParam param: IOSQLiteParam) {
 	
-		self.whereValues.append((paramValue as Any, PARAM_TYPES.INT))
+		self.activeRecord!.setParam(param: param)
 	}
 	
-	public mutating func setParam(stringParam paramValue: String) {
+	public func setParam(intParam param: Int) {
 		
-		self.whereValues.append((paramValue as Any, PARAM_TYPES.STRING))
+		let tmpParam = IOSQLiteParam(withInt: param)
+		self.activeRecord!.setParam(param: tmpParam)
 	}
 	
-	public mutating func setParam(numberParam paramValue: Double) {
+	public func setParam(strParam param: String) {
 		
-		self.whereValues.append((paramValue as Any, PARAM_TYPES.NUMBER))
+		let tmpParam = IOSQLiteParam(withStr: param)
+		self.activeRecord!.setParam(param: tmpParam)
 	}
 	
-	public mutating func setParam(nullParam paramValue: NSNull) {
+	public func setParam(doubleParam param: Double) {
 		
-		self.whereValues.append((paramValue as Any, PARAM_TYPES.NULL))
+		let tmpParam = IOSQLiteParam(withDouble: param)
+		self.activeRecord!.setParam(param: tmpParam)
 	}
 	
-	public mutating func addOrder(column: String, orderType: ORDER_TYPES) {
+	public func setParam(dateParam param: Date) {
 		
-		self.orders.append((column, orderType))
+		let tmpParam = IOSQLiteParam(withDate: param)
+		self.activeRecord!.setParam(param: tmpParam)
 	}
 	
-	public mutating func setStartRow(startRow: Int) {
+	public func addOrder(orderByAsc column: String) {
 		
-		self.startRow = startRow
+		let order = IOSQLiteOrder(tableName: self.getTableName, columnName: column, orderType: IOSQLiteOrder.IOSQLITE_ORDER_TYPES.ASC)
+		self.activeRecord!.addOrder(order: order)
 	}
 	
-	public mutating func setMaxRows(maxRows: Int) {
+	public func addOrder(orderByDesc column: String) {
 		
-		self.maxRows = maxRows
+		let order = IOSQLiteOrder(tableName: self.getTableName, columnName: column, orderType: IOSQLiteOrder.IOSQLITE_ORDER_TYPES.DESC)
+		self.activeRecord!.addOrder(order: order)
+	}
+	
+	public func addOrder(order orderData: IOSQLiteOrder) {
+		
+		self.activeRecord!.addOrder(order: orderData)
+	}
+	
+	public func setStartRow(startRow: Int) {
+		
+		self.activeRecord!.startRow = startRow
+	}
+	
+	public func setMaxRows(maxRows: Int) {
+		
+		self.activeRecord!.maxRows = maxRows
+	}
+	
+	public func addGroupBy(groupColumnName: String) {
+		
+		self.activeRecord!.addGroupBy(groupColumn: groupColumnName)
+	}
+	
+	public func addHavingClause(havingClause: IOSQLiteWhere) {
+		
+		self.activeRecord!.addHavingClause(condition: havingClause)
+	}
+	
+	public func addJoin(leftJoin tableName: String, withTable: String, column1: String, column2: String) {
+		
+		let joinData = IOSQLiteJoin(tableName: tableName, withTable: withTable, column1: column1, column2: column2, joinType: IOSQLiteJoin.JOIN_TYPES.LEFT)
+		self.activeRecord!.addJoin(joinData: joinData)
+	}
+	
+	public func addJoin(join joinData: IOSQLiteJoin) {
+		
+		self.activeRecord!.addJoin(joinData: joinData)
+	}
+	
+	public func delete() {
+		
+		self.activeRecord!.delete()
+	}
+	
+	public func addInsert(forColumn columnName: String) {
+		
+		self.activeRecord!.addInsert(columnNames: [columnName])
+	}
+	
+	public func addInsert(columns columnNames: [String]) {
+		
+		self.activeRecord!.addInsert(columnNames: columnNames)
+	}
+	
+	public mutating func getQuery() throws -> String {
+		
+		do {
+			let queryStr = try self.activeRecord!.getQuery()
+			self.flush()
+			return queryStr
+		} catch let error {
+			self.flush()
+			throw error
+		}
+	}
+	
+	public mutating func flush() {
+		
+		self.activeRecord = nil
 	}
 }
