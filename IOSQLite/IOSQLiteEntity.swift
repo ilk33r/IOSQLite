@@ -38,24 +38,19 @@ public struct IOSQLiteEntity {
 	
 	public func addWhere(withColumn columnName: String) {
 		
-		let whereDataType = IOSQLiteWhere(tableName: self.getTableName, columnName: columnName, comparsionType: IOSQLiteWhere.COMPARSION_TYPES.EQUAL, whereType: IOSQLiteWhere.WHERE_TYPES.AND)
+		let whereDataType = IOSQLiteWhere(tableName: self.getTableName, columnName: columnName, comparsionType: IOSQLiteWhere.COMPARSION_TYPES.EQUAL, whereType: IOSQLiteWhere.WHERE_TYPES.AND, paramCount: 1)
 		self.activeRecord!.addWhere(whereData: whereDataType)
 	}
 	
 	public func addWhere(withType columnName: String, comparsionType: IOSQLiteWhere.COMPARSION_TYPES, whereType: IOSQLiteWhere.WHERE_TYPES) {
 		
-		let whereDataType = IOSQLiteWhere(tableName: self.getTableName, columnName: columnName, comparsionType: comparsionType, whereType: whereType)
+		let whereDataType = IOSQLiteWhere(tableName: self.getTableName, columnName: columnName, comparsionType: comparsionType, whereType: whereType, paramCount: 1)
 		self.activeRecord!.addWhere(whereData: whereDataType)
 	}
 	
 	public func addWhere(withTypeOtherTable whereData: IOSQLiteWhere) {
 		
 		self.activeRecord!.addWhere(whereData: whereData)
-	}
-	
-	public func addWhere(withGroup whereData: [IOSQLiteWhere]) {
-		
-		self.activeRecord!.addWhereGroup(whereDatas: whereData)
 	}
 	
 	public func setParam(ioSQLiteParam param: IOSQLiteParam) {
@@ -148,6 +143,16 @@ public struct IOSQLiteEntity {
 	public func addInsert(columns columnNames: [String]) {
 		
 		self.activeRecord!.addInsert(columnNames: columnNames)
+	}
+	
+	public func addUpdate(forColumn columnName: String) {
+		
+		self.activeRecord!.addUpdate(columnNames: [columnName])
+	}
+	
+	public func addUpdate(columns columnNames: [String]) {
+		
+		self.activeRecord!.addUpdate(columnNames: columnNames)
 	}
 	
 	public mutating func getQuery() throws -> String {

@@ -13,4 +13,8 @@ public enum IOSQLiteError: Error {
 	case SQLiteOpenError(err: String)
 	case SQLiteActiveRecordQueryTypeError(err: String)
 	case SQLiteParameterErrorError(err: String)
+	case SQLiteExecuteError(err: String)
+	case SQLiteFreeError(err: String)
+	case SQLiteInvalidColumnIndexError(err: String)
+	case SQLiteResultDoesNotExists(err: String)
 }

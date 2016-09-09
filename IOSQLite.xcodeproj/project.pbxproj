@@ -7,15 +7,48 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DE1B5E5A1D817D7500B92E5C /* IOSQLiteResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE1B5E591D817D7500B92E5C /* IOSQLiteResult.swift */; };
+		DE1B5E621D81BD6800B92E5C /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE1B5E611D81BD6700B92E5C /* main.swift */; };
+		DE1B5E661D81BD7100B92E5C /* IOSQLite.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE4A3D131D7FB82C006AB97E /* IOSQLite.framework */; };
+		DE1B5E691D81BD9600B92E5C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE4A3D291D7FB97F006AB97E /* Foundation.framework */; };
+		DE1B5E6B1D81BF5800B92E5C /* TestCreateTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE1B5E6A1D81BF5800B92E5C /* TestCreateTable.swift */; };
 		DE4A3D241D7FB85D006AB97E /* IOSQLite.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4A3D1F1D7FB85D006AB97E /* IOSQLite.swift */; };
 		DE4A3D251D7FB85D006AB97E /* IOSQLiteActiveRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4A3D201D7FB85D006AB97E /* IOSQLiteActiveRecord.swift */; };
 		DE4A3D261D7FB85D006AB97E /* IOSQLiteEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4A3D211D7FB85D006AB97E /* IOSQLiteEntity.swift */; };
 		DE4A3D271D7FB85D006AB97E /* IOSQLiteError.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4A3D221D7FB85D006AB97E /* IOSQLiteError.swift */; };
-		DE4A3D2A1D7FB97F006AB97E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE4A3D291D7FB97F006AB97E /* Foundation.framework */; };
 		DE4A3D2E1D7FBA40006AB97E /* IOSQLiteActiveRecordTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE4A3D2D1D7FBA40006AB97E /* IOSQLiteActiveRecordTypes.swift */; };
+		DEAC428B1D830922001DD4E5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DE4A3D291D7FB97F006AB97E /* Foundation.framework */; };
+		DEF6D0841D82989A000AE150 /* PrintResultAsTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEF6D0831D82989A000AE150 /* PrintResultAsTable.swift */; };
+		DEF6D0861D82B93B000AE150 /* IOUnitTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEF6D0851D82B93B000AE150 /* IOUnitTest.swift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		DE1B5E671D81BD7500B92E5C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = DE4A3D0A1D7FB82C006AB97E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = DE4A3D121D7FB82C006AB97E;
+			remoteInfo = IOSQLite;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		DE1B5E5D1D81BD6700B92E5C /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		DE1B5E591D817D7500B92E5C /* IOSQLiteResult.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IOSQLiteResult.swift; sourceTree = "<group>"; };
+		DE1B5E5F1D81BD6700B92E5C /* IOSQLiteTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = IOSQLiteTest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DE1B5E611D81BD6700B92E5C /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		DE1B5E6A1D81BF5800B92E5C /* TestCreateTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestCreateTable.swift; sourceTree = "<group>"; };
 		DE4A3D131D7FB82C006AB97E /* IOSQLite.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = IOSQLite.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE4A3D171D7FB82C006AB97E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DE4A3D1E1D7FB85D006AB97E /* IOSQL-Bridging-Header.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "IOSQL-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -26,24 +59,47 @@
 		DE4A3D291D7FB97F006AB97E /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		DE4A3D2B1D7FB984006AB97E /* IOPaymentCalculatorExtension.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOPaymentCalculatorExtension.framework; path = ../../build/Debug/IOPaymentCalculatorExtension.framework; sourceTree = "<group>"; };
 		DE4A3D2D1D7FBA40006AB97E /* IOSQLiteActiveRecordTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IOSQLiteActiveRecordTypes.swift; sourceTree = "<group>"; };
+		DEF6D0831D82989A000AE150 /* PrintResultAsTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrintResultAsTable.swift; sourceTree = "<group>"; };
+		DEF6D0851D82B93B000AE150 /* IOUnitTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IOUnitTest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		DE1B5E5C1D81BD6700B92E5C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DE1B5E691D81BD9600B92E5C /* Foundation.framework in Frameworks */,
+				DE1B5E661D81BD7100B92E5C /* IOSQLite.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DE4A3D0F1D7FB82C006AB97E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DE4A3D2A1D7FB97F006AB97E /* Foundation.framework in Frameworks */,
+				DEAC428B1D830922001DD4E5 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		DE1B5E601D81BD6700B92E5C /* IOSQLiteTest */ = {
+			isa = PBXGroup;
+			children = (
+				DE1B5E611D81BD6700B92E5C /* main.swift */,
+				DE1B5E6A1D81BF5800B92E5C /* TestCreateTable.swift */,
+				DEF6D0831D82989A000AE150 /* PrintResultAsTable.swift */,
+				DEF6D0851D82B93B000AE150 /* IOUnitTest.swift */,
+			);
+			path = IOSQLiteTest;
+			sourceTree = "<group>";
+		};
 		DE4A3D091D7FB82C006AB97E = {
 			isa = PBXGroup;
 			children = (
 				DE4A3D151D7FB82C006AB97E /* IOSQLite */,
+				DE1B5E601D81BD6700B92E5C /* IOSQLiteTest */,
 				DE4A3D141D7FB82C006AB97E /* Products */,
 				DE4A3D281D7FB97F006AB97E /* Frameworks */,
 			);
@@ -53,6 +109,7 @@
 			isa = PBXGroup;
 			children = (
 				DE4A3D131D7FB82C006AB97E /* IOSQLite.framework */,
+				DE1B5E5F1D81BD6700B92E5C /* IOSQLiteTest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -67,6 +124,7 @@
 				DE4A3D211D7FB85D006AB97E /* IOSQLiteEntity.swift */,
 				DE4A3D221D7FB85D006AB97E /* IOSQLiteError.swift */,
 				DE4A3D171D7FB82C006AB97E /* Info.plist */,
+				DE1B5E591D817D7500B92E5C /* IOSQLiteResult.swift */,
 			);
 			path = IOSQLite;
 			sourceTree = "<group>";
@@ -93,6 +151,24 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		DE1B5E5E1D81BD6700B92E5C /* IOSQLiteTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DE1B5E631D81BD6800B92E5C /* Build configuration list for PBXNativeTarget "IOSQLiteTest" */;
+			buildPhases = (
+				DE1B5E5B1D81BD6700B92E5C /* Sources */,
+				DE1B5E5C1D81BD6700B92E5C /* Frameworks */,
+				DE1B5E5D1D81BD6700B92E5C /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DE1B5E681D81BD7500B92E5C /* PBXTargetDependency */,
+			);
+			name = IOSQLiteTest;
+			productName = IOSQLiteTest;
+			productReference = DE1B5E5F1D81BD6700B92E5C /* IOSQLiteTest */;
+			productType = "com.apple.product-type.tool";
+		};
 		DE4A3D121D7FB82C006AB97E /* IOSQLite */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = DE4A3D1B1D7FB82C006AB97E /* Build configuration list for PBXNativeTarget "IOSQLite" */;
@@ -117,9 +193,14 @@
 		DE4A3D0A1D7FB82C006AB97E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0800;
 				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = ilkerozcan;
 				TargetAttributes = {
+					DE1B5E5E1D81BD6700B92E5C = {
+						CreatedOnToolsVersion = 8.0;
+						ProvisioningStyle = Automatic;
+					};
 					DE4A3D121D7FB82C006AB97E = {
 						CreatedOnToolsVersion = 8.0;
 						LastSwiftMigration = 0800;
@@ -140,6 +221,7 @@
 			projectRoot = "";
 			targets = (
 				DE4A3D121D7FB82C006AB97E /* IOSQLite */,
+				DE1B5E5E1D81BD6700B92E5C /* IOSQLiteTest */,
 			);
 		};
 /* End PBXProject section */
@@ -155,6 +237,17 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		DE1B5E5B1D81BD6700B92E5C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DE1B5E6B1D81BF5800B92E5C /* TestCreateTable.swift in Sources */,
+				DE1B5E621D81BD6800B92E5C /* main.swift in Sources */,
+				DEF6D0841D82989A000AE150 /* PrintResultAsTable.swift in Sources */,
+				DEF6D0861D82B93B000AE150 /* IOUnitTest.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		DE4A3D0E1D7FB82C006AB97E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -163,13 +256,65 @@
 				DE4A3D2E1D7FBA40006AB97E /* IOSQLiteActiveRecordTypes.swift in Sources */,
 				DE4A3D261D7FB85D006AB97E /* IOSQLiteEntity.swift in Sources */,
 				DE4A3D271D7FB85D006AB97E /* IOSQLiteError.swift in Sources */,
+				DE1B5E5A1D817D7500B92E5C /* IOSQLiteResult.swift in Sources */,
 				DE4A3D241D7FB85D006AB97E /* IOSQLite.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		DE1B5E681D81BD7500B92E5C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = DE4A3D121D7FB82C006AB97E /* IOSQLite */;
+			targetProxy = DE1B5E671D81BD7500B92E5C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		DE1B5E641D81BD6800B92E5C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_HEADERS_RUN_UNIFDEF = YES;
+				DEFINES_MODULE = YES;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				LD_GENERATE_MAP_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx @executable_path";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				OTHER_SWIFT_FLAGS = "-DXcode -DMAC_OSX";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "";
+				SWIFT_FORCE_DYNAMIC_LINK_STDLIB = YES;
+				SWIFT_FORCE_STATIC_LINK_STDLIB = NO;
+				SWIFT_VERSION = 3.0;
+				USE_HEADERMAP = NO;
+			};
+			name = Debug;
+		};
+		DE1B5E651D81BD6800B92E5C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_HEADERS_RUN_UNIFDEF = YES;
+				DEFINES_MODULE = YES;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				LD_GENERATE_MAP_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx @executable_path";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				OTHER_SWIFT_FLAGS = "-DXcode -DMAC_OSX";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_FORCE_DYNAMIC_LINK_STDLIB = YES;
+				SWIFT_FORCE_STATIC_LINK_STDLIB = NO;
+				SWIFT_VERSION = 3.0;
+				USE_HEADERMAP = NO;
+			};
+			name = Release;
+		};
 		DE4A3D191D7FB82C006AB97E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -211,6 +356,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LD_RUNPATH_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -257,6 +403,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				LD_RUNPATH_SEARCH_PATHS = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.11;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
@@ -272,7 +419,6 @@
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
-				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -285,14 +431,13 @@
 				);
 				INFOPLIST_FILE = IOSQLite/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = "-lsqlite3";
 				OTHER_SWIFT_FLAGS = "-DXcode -DDarwin";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ilkerozcan.IOSQLite;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = "";
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/IOSQLite/IOSQL-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -306,7 +451,6 @@
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
-				COMBINE_HIDPI_IMAGES = YES;
 				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = "";
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -316,13 +460,12 @@
 				GCC_PREPROCESSOR_DEFINITIONS = "Darwin=1";
 				INFOPLIST_FILE = IOSQLite/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				OTHER_LDFLAGS = "-lsqlite3";
 				OTHER_SWIFT_FLAGS = "-DXcode -DDarwin";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ilkerozcan.IOSQLite;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = "";
+				SDKROOT = macosx;
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/IOSQLite/IOSQL-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
@@ -332,6 +475,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		DE1B5E631D81BD6800B92E5C /* Build configuration list for PBXNativeTarget "IOSQLiteTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				DE1B5E641D81BD6800B92E5C /* Debug */,
+				DE1B5E651D81BD6800B92E5C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		DE4A3D0D1D7FB82C006AB97E /* Build configuration list for PBXProject "IOSQLite" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

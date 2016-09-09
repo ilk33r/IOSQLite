@@ -27,6 +27,7 @@ internal class IOSQLiteActiveRecord {
 	private var havingClause: [IOSQLiteWhere]
 	private var joins: [IOSQLiteJoin]
 	private var insertColumns: [String]
+	private var updateColumns: [String]
 	
 	private var _maxRows = -1
 	private var _startRow = -1
@@ -68,6 +69,7 @@ internal class IOSQLiteActiveRecord {
 		self.havingClause = [IOSQLiteWhere]()
 		self.joins = [IOSQLiteJoin]()
 		self.insertColumns = [String]()
+		self.updateColumns = [String]()
 		self.currentQueryType = QUERY_TYPE.NONE
 	}
 	
@@ -169,6 +171,22 @@ internal class IOSQLiteActiveRecord {
 		}
 	}
 	
+	func addUpdate(columnNames: [String]) {
+		
+		if(self.currentQueryType == QUERY_TYPE.NONE) {
+			self.currentQueryType = QUERY_TYPE.UPDATE
+		}
+		
+		if(self.currentQueryType == QUERY_TYPE.UPDATE) {
+			
+			for columnName in columnNames {
+				self.updateColumns.append(columnName)
+			}
+		}else{
+			self.lastException = IOSQLiteError.SQLiteActiveRecordQueryTypeError(err: "You can not use UPDATE and \(self.currentQueryType.rawValue) together")
+		}
+	}
+	
 	func getQuery() throws -> String {
 		
 		if (self.lastException != nil) {
@@ -205,10 +223,16 @@ internal class IOSQLiteActiveRecord {
 			return queryStr
 			
 		case .UPDATE:
-			break
+			
+			let queryStr = self.generateUpdateQuery()
+			if (self.lastException != nil) {
+				
+				throw self.lastException!
+			}
+			return queryStr
+			
 		default:
 			throw IOSQLiteError.SQLiteActiveRecordQueryTypeError(err: "Invalid query")
-			break
 		}
 	}
 	
@@ -471,68 +495,117 @@ internal class IOSQLiteActiveRecord {
 		var queryString = "INSERT INTO \(self.tableName)"
 		
 		var columnLoopIdx = 0
-		for selectColumn in self.selectColumns {
+		for insertColumn in self.insertColumns {
+			
+			if(columnLoopIdx > 0) {
+				
+				queryString += ","
+			}else{
+				queryString += " ("
+			}
+			
+			queryString += " \"\(insertColumn)\""
+			columnLoopIdx += 1
+		}
+		
+		let paramCount = self.params.count
+		if(paramCount % self.insertColumns.count != 0) {
+			
+			self.lastException = IOSQLiteError.SQLiteParameterErrorError(err: "Invalid parameter count!")
+			return queryString
+		}
+		
+		queryString += " ) VALUES "
+		
+		var currentParamIdx = 0
+		for i in 0..<paramCount {
+			
+			if(currentParamIdx == 0) {
+				
+				queryString += " ("
+			}else{
+				queryString += ","
+			}
+			
+			let param = self.params[i]
+			
+			switch param.paramType {
+			case .INT:
+				queryString += " \(param.intParam!)"
+				break
+			case .NUMBER:
+				queryString += " \(param.doubleParam!)"
+				break
+			case .STRING:
+				queryString += " '\(param.strParam!)'"
+				break
+			case .DATETIME:
+				queryString += " '\(param.dateStrParam!)'"
+				break
+			default:
+				queryString += " NULL"
+				break
+			}
+			
+			if(currentParamIdx > 0 && paramCount % currentParamIdx == 0) {
+				
+				queryString += " ),"
+			}
+			
+			currentParamIdx += 1
+		}
+		
+		queryString += " );"
+		
+		return queryString
+	}
+	
+	private func generateUpdateQuery() -> String {
+		
+		var queryString = "UPDATE \(self.tableName) SET"
+		
+		var columnLoopIdx = 0
+		let paramCount = self.params.count
+		if(paramCount != self.updateColumns.count) {
+			
+			self.lastException = IOSQLiteError.SQLiteParameterErrorError(err: "Invalid parameter count!")
+			return queryString
+		}
+		
+		
+		for updateColumn in self.updateColumns {
 			
 			if(columnLoopIdx > 0) {
 				
 				queryString += ","
 			}
 			
-			if(selectColumn.isDistinct) {
-				
-				queryString += " DISTINCT \(selectColumn.tableName).\(selectColumn.columnName)"
-			}else{
-				queryString += " \(selectColumn.tableName).\(selectColumn.columnName)"
-			}
+			queryString += " \"\(updateColumn)\" = "
 			
-			if let columnAlias = selectColumn.alias {
-				
-				queryString += " AS \(columnAlias)"
+			let param = self.params[columnLoopIdx]
+			
+			switch param.paramType {
+			case .INT:
+				queryString += " \(param.intParam!)"
+				break
+			case .NUMBER:
+				queryString += " \(param.doubleParam!)"
+				break
+			case .STRING:
+				queryString += " '\(param.strParam!)'"
+				break
+			case .DATETIME:
+				queryString += " '\(param.dateStrParam!)'"
+				break
+			default:
+				queryString += " NULL"
+				break
 			}
 			
 			columnLoopIdx += 1
 		}
 		
-		queryString += " FROM \(self.tableName)"
-		
-		
-		for joinData in self.joins {
-			
-			queryString += " \(joinData.joinType.rawValue) \(joinData.tableName) ON \(joinData.tableName).\(joinData.expressionColumn_1) = \(joinData.expressionTable).\(joinData.expressionColumn_2)"
-		}
-		
-		if(self.lastException == nil) {
-			
-			queryString += " WHERE \(self.getWhereString())"
-			
-		}else{
-			return queryString
-		}
-		
-		if let groupByString = self.getGroupByString() {
-			
-			queryString += " GROUP BY \(groupByString)"
-		}
-		
-		if let havingString = self.getHavingString() {
-			
-			queryString += " HAVING \(havingString)"
-		}
-		
-		if let orderString = self.getOrderString() {
-			
-			queryString += " ORDER BY \(orderString)"
-		}
-		
-		if(self._maxRows != -1) {
-			
-			queryString += " LIMIT \(self._maxRows)"
-		}
-		
-		if(self._startRow != -1) {
-			
-			queryString += " OFFSET \(self._startRow)"
-		}
+		queryString += " WHERE \(self.getWhereString());"
 		
 		return queryString
 	}
