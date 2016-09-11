@@ -60,10 +60,6 @@ public struct IOSQLiteWhere {
 	public enum WHERE_TYPES: String {
 		case AND = "AND"
 		case OR = "OR"
-		case IN = "IN"
-		case NOT_IN = "NOT IN"
-		case IS = "IS"
-		case IS_NOT = "IS NOT"
 	}
 	
 	public enum COMPARSION_TYPES: String {
@@ -77,6 +73,10 @@ public struct IOSQLiteWhere {
 		case GREATER_EQUAL_THAN = ">="
 		case LESS_EQUAL_THAN = "<="
 		case BETWEEN = "BETWEEN"
+		case IN = "IN"
+		case NOT_IN = "NOT IN"
+		case IS = "IS"
+		case IS_NOT = "IS NOT"
 	}
 
 	private var _tableName: String
@@ -126,7 +126,14 @@ public struct IOSQLiteWhere {
 		self._columnName = columnName
 		self._comparsionType = comparsionType
 		self._whereType = whereType
-		self._paramCount = paramCount
+		
+		if(comparsionType == COMPARSION_TYPES.BETWEEN) {
+			
+			self._paramCount = 2
+		}else{
+			
+			self._paramCount = paramCount
+		}
 	}
 }
 

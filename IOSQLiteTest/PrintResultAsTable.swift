@@ -38,12 +38,13 @@ final class PrintResultAsTable {
 	
 	private func printTableStart() {
 		
+		var line = ""
 		for i in 0..<self.result.columnCount {
 			
 			do {
 				
 				let colName = try self.result.getColumnName(columnIdx: i)
-				printRow(rowString: colName)
+				line += printRowStr(rowString: colName)
 				
 			} catch IOSQLiteError.SQLiteInvalidColumnIndexError(let err) {
 				
@@ -54,6 +55,8 @@ final class PrintResultAsTable {
 				break
 			}
 		}
+		
+		print(line)
 	}
 	
 	private func printRows() {
@@ -61,14 +64,17 @@ final class PrintResultAsTable {
 		for i in 0..<self.result.rowCount {
 			
 			let rowData = self.result[i]
+			var line = ""
 			for j in 0..<self.result.columnCount {
 				
-				printRow(rowString: rowData![j])
+				line += printRowStr(rowString: rowData![j])
 			}
+			
+			print(line)
 		}
 	}
 	
-	private func printRow(rowString: String) {
+	private func printRowStr(rowString: String) -> String {
 		
 		let rowStr = "|\(rowString)"
 		let rowStrLen = rowStr.characters.count
@@ -77,11 +83,11 @@ final class PrintResultAsTable {
 		if (charLeft > 0) {
 			
 			let colSpaceStr = String(repeating: " ", count: charLeft)
-			print("\(rowStr)\(colSpaceStr)")
+			return "\(rowStr)\(colSpaceStr)"
 			
 		}else if (charLeft == 0) {
 			
-			print("\(rowStr)")
+			return "\(rowStr)"
 			
 		}else{
 			
@@ -90,13 +96,13 @@ final class PrintResultAsTable {
 			let _endIdx = rowStr.index(strStartIdx, offsetBy: colSize)
 			let colRange = Range<String.Index>(_startIdx..<_endIdx)
 			let colTrimmedStr = rowStr.substring(with: colRange)
-			print("\(colTrimmedStr)")
+			return "\(colTrimmedStr)"
 		}
 	}
 	
 	private func printLine() {
 		
-		let lineStr = String(repeating: "-", count: self.colSize - 2)
-		print("\n\(lineStr)\n")
+		let lineStr = String(repeating: "-", count: self.bashSize - 1)
+		print("\(lineStr)")
 	}
 }

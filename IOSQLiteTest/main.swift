@@ -9,6 +9,16 @@
 import Foundation
 import IOSQLite
 
+struct TestType {
+	
+	let verbose: Bool
+	init(verboseTest: Bool) {
+		
+		self.verbose = verboseTest
+	}
+}
+
+let currentTestType: TestType
 let args = ProcessInfo.processInfo.arguments
 
 if(args.count < 2) {
@@ -17,6 +27,15 @@ if(args.count < 2) {
 	exit(1)
 	
 }else{
+	
+	if(args.count > 2 && args[2] == "--verbose") {
+		
+		currentTestType = TestType(verboseTest: true)
+	}else{
+		currentTestType = TestType(verboseTest: false)
+	}
+	
+	try? FileManager.default.removeItem(atPath: "/tmp/TestDatabase.db")
 	
 	var continueToNextTest = true
 	do {
@@ -91,7 +110,11 @@ if(args.count < 2) {
 		do {
 			let tableList = try sqlite.getResults()
 			let resultPrinter = PrintResultAsTable(resultData: tableList)
-			resultPrinter.printResult()
+			
+			if(currentTestType.verbose) {
+				
+				resultPrinter.printResult()
+			}
 			
 			let unitTest = IOUnitTest(result: tableList, ecpectedData: [ expectedData_1, expectedData_2, expectedData_3 ])
 			
@@ -120,14 +143,95 @@ if(args.count < 2) {
 		}
 	}
 	
-	sqlite.closeConnection()
-	
-	do {
-		try FileManager.default.removeItem(atPath: "/tmp/TestDatabase.db")
-	} catch let error {
-		print("ERROR! \(error.localizedDescription) \n")
-		exit(1)
+	if(continueToNextTest) {
+		continueToNextTest = insertTest(sqlite: sqlite, testType: currentTestType)
 	}
 	
-	exit(0)
+	
+	if(continueToNextTest) {
+		
+		print("Insert test [OK]!")
+		
+		/*
+		Select columns from table
+		*/
+		continueToNextTest = SelectTest1(sqlite: sqlite, testType: currentTestType)
+	}
+	
+	if(continueToNextTest) {
+		
+		/*
+		Select columns, COUNT from table Where =
+		*/
+		continueToNextTest = SelectTest2(sqlite: sqlite, testType: currentTestType)
+	}
+	
+	if(continueToNextTest) {
+		
+		/*
+		Select columns from table Where Like and Between
+		*/
+		continueToNextTest = SelectTest3(sqlite: sqlite, testType: currentTestType)
+	}
+	
+	if(continueToNextTest) {
+		
+		/*
+		Select columns from table Where != and <
+		*/
+		continueToNextTest = SelectTest4(sqlite: sqlite, testType: currentTestType)
+	}
+	
+	if(continueToNextTest) {
+		
+		/*
+		Select columns from table1 left join table 2 LIMIT x OFFSET y
+		*/
+		continueToNextTest = SelectTest5(sqlite: sqlite, testType: currentTestType)
+	}
+	
+	if(continueToNextTest) {
+		
+		/*
+		Select columns from table1 left join table 2 inner join table 3 where is not null or oqual
+		*/
+		continueToNextTest = SelectTest6(sqlite: sqlite, testType: currentTestType)
+	}
+	
+	if(continueToNextTest) {
+		
+		/*
+		Select columns from table1 left join table 2 left join table 3 where in order by
+		*/
+		continueToNextTest = SelectTest7(sqlite: sqlite, testType: currentTestType)
+	}
+	
+	if(continueToNextTest) {
+		
+		/*
+		Select columns, count from table1 left join table 2 left join table 3 where >= group by having count() order by
+		*/
+		continueToNextTest = SelectTest8(sqlite: sqlite, testType: currentTestType)
+	}
+	
+	if(continueToNextTest) {
+		
+		continueToNextTest = UpdateTest(sqlite: sqlite, testType: currentTestType)
+	}
+	
+	if(continueToNextTest) {
+		
+		continueToNextTest = DeleteTest(sqlite: sqlite, testType: currentTestType)
+	}
+	
+	sqlite.closeConnection()
+	
+	if(!continueToNextTest) {
+	
+		print("Warning! Test FAILED!")
+		exit(1)
+	}else{
+		print("Test success!")
+		exit(0)
+	}
 }

@@ -58,6 +58,19 @@ internal class IOSQLiteActiveRecord {
 	private var currentParamIdx = 0
 	private var lastException: Error?
 	
+	private let SqliteDefaultFunctions = [
+		"COUNT",
+		"MAX",
+		"MIN",
+		"AVG",
+		"SUM",
+		"RANDOM",
+		"ABS",
+		"UPPER",
+		"LOWER",
+		"LENGTH"
+	]
+	
 	init(tableName: String) {
 		
 		self.tableName = tableName
@@ -250,9 +263,20 @@ internal class IOSQLiteActiveRecord {
 			
 			if(selectColumn.isDistinct) {
 				
-				queryString += " DISTINCT \(selectColumn.tableName).\(selectColumn.columnName)"
+				queryString += " DISTINCT("
+			}
+			
+			if(self.isSQLiteFunc(columnName: selectColumn.columnName)) {
+				
+				queryString += " \(selectColumn.columnName)"
 			}else{
+				
 				queryString += " \(selectColumn.tableName).\(selectColumn.columnName)"
+			}
+			
+			if(selectColumn.isDistinct) {
+				
+				queryString += " )"
 			}
 			
 			if let columnAlias = selectColumn.alias {
@@ -271,11 +295,12 @@ internal class IOSQLiteActiveRecord {
 			queryString += " \(joinData.joinType.rawValue) \(joinData.tableName) ON \(joinData.tableName).\(joinData.expressionColumn_1) = \(joinData.expressionTable).\(joinData.expressionColumn_2)"
 		}
 		
-		if(self.lastException == nil) {
+		if(self.lastException == nil && self.whereQueries.count > 0) {
 			
 			queryString += " WHERE \(self.getWhereString())"
 			
-		}else{
+		}else if(self.lastException != nil) {
+		
 			return queryString
 		}
 		
@@ -304,6 +329,7 @@ internal class IOSQLiteActiveRecord {
 			queryString += " OFFSET \(self._startRow)"
 		}
 		
+		queryString += ";"
 		return queryString
 	}
 	
@@ -331,9 +357,20 @@ internal class IOSQLiteActiveRecord {
 		var responseString = ""
 		
 		if(loopIdx == 0) {
-			responseString += " \(whereData.tableName).\(whereData.columnName) \(whereData.comparsionType.rawValue)"
+			
+			if(self.isSQLiteFunc(columnName: whereData.columnName)) {
+				responseString += " \(whereData.columnName) \(whereData.comparsionType.rawValue)"
+			}else{
+				responseString += " \(whereData.tableName).\(whereData.columnName) \(whereData.comparsionType.rawValue)"
+			}
+			
 		}else{
-			responseString += " \(whereData.whereType.rawValue) \(whereData.tableName).\(whereData.columnName) \(whereData.comparsionType.rawValue)"
+			
+			if(self.isSQLiteFunc(columnName: whereData.columnName)) {
+				responseString += " \(whereData.whereType.rawValue) \(whereData.columnName) \(whereData.comparsionType.rawValue)"
+			}else{
+				responseString += " \(whereData.whereType.rawValue) \(whereData.tableName).\(whereData.columnName) \(whereData.comparsionType.rawValue)"
+			}
 		}
 		
 		if(currentParamIdx >= self.params.count) {
@@ -345,7 +382,7 @@ internal class IOSQLiteActiveRecord {
 			let paramCount = whereData.paramCount
 			for i in 0..<paramCount {
 				
-				if(i == 0 && paramCount > 1) {
+				if(i == 0 && paramCount > 1 && (whereData.comparsionType == IOSQLiteWhere.COMPARSION_TYPES.IN || whereData.comparsionType == IOSQLiteWhere.COMPARSION_TYPES.NOT_IN)) {
 					
 					responseString += " ("
 					
@@ -384,7 +421,7 @@ internal class IOSQLiteActiveRecord {
 				currentParamIdx += 1
 			}
 			
-			if(paramCount > 1) {
+			if(paramCount > 1 && (whereData.comparsionType == IOSQLiteWhere.COMPARSION_TYPES.IN || whereData.comparsionType == IOSQLiteWhere.COMPARSION_TYPES.NOT_IN)) {
 				
 				responseString += " )"
 			}
@@ -450,7 +487,7 @@ internal class IOSQLiteActiveRecord {
 			var responseString = ""
 			
 			var loopIdx = 0
-			var lastOrder = IOSQLiteOrder.IOSQLITE_ORDER_TYPES.ASC
+			var lastOrder = self.orders[0].currentOrder
 			
 			for orderData in self.orders {
 				
@@ -462,7 +499,11 @@ internal class IOSQLiteActiveRecord {
 					responseString += " \(lastOrder.rawValue)"
 				}
 				
-				responseString += " \(orderData.tableName).\(orderData.columnName)"
+				if(self.isSQLiteFunc(columnName: orderData.columnName)) {
+					responseString += "   \(orderData.columnName)"
+				}else{
+					responseString += " \(orderData.tableName).\(orderData.columnName)"
+				}
 				lastOrder = orderData.currentOrder
 				
 				loopIdx += 1
@@ -520,10 +561,19 @@ internal class IOSQLiteActiveRecord {
 		var currentParamIdx = 0
 		for i in 0..<paramCount {
 			
-			if(currentParamIdx == 0) {
+			if(currentParamIdx == 0 && i == 0) {
 				
+				currentParamIdx += 1
 				queryString += " ("
+			
+			}else if(i > 0 && currentParamIdx > 0 && currentParamIdx % self.insertColumns.count == 0 && i < (paramCount - 1)) {
+				
+				queryString += " ), ("
+				currentParamIdx = 1
+				
 			}else{
+				
+				currentParamIdx += 1
 				queryString += ","
 			}
 			
@@ -547,12 +597,6 @@ internal class IOSQLiteActiveRecord {
 				break
 			}
 			
-			if(currentParamIdx > 0 && paramCount % currentParamIdx == 0) {
-				
-				queryString += " ),"
-			}
-			
-			currentParamIdx += 1
 		}
 		
 		queryString += " );"
@@ -564,9 +608,9 @@ internal class IOSQLiteActiveRecord {
 		
 		var queryString = "UPDATE \(self.tableName) SET"
 		
-		var columnLoopIdx = 0
+		self.currentParamIdx = 0
 		let paramCount = self.params.count
-		if(paramCount != self.updateColumns.count) {
+		if(paramCount < self.updateColumns.count) {
 			
 			self.lastException = IOSQLiteError.SQLiteParameterErrorError(err: "Invalid parameter count!")
 			return queryString
@@ -575,14 +619,14 @@ internal class IOSQLiteActiveRecord {
 		
 		for updateColumn in self.updateColumns {
 			
-			if(columnLoopIdx > 0) {
+			if(self.currentParamIdx > 0) {
 				
 				queryString += ","
 			}
 			
 			queryString += " \"\(updateColumn)\" = "
 			
-			let param = self.params[columnLoopIdx]
+			let param = self.params[currentParamIdx]
 			
 			switch param.paramType {
 			case .INT:
@@ -602,11 +646,42 @@ internal class IOSQLiteActiveRecord {
 				break
 			}
 			
-			columnLoopIdx += 1
+			self.currentParamIdx += 1
 		}
 		
 		queryString += " WHERE \(self.getWhereString());"
 		
 		return queryString
+	}
+	
+	private func isSQLiteFunc(columnName: String) -> Bool {
+	
+		let columnNameLen = columnName.characters.count
+		var statusRetval = false
+		
+		for sqliteFunction in self.SqliteDefaultFunctions {
+			
+			let currentFuncLen = sqliteFunction.characters.count
+			
+			if(columnNameLen < currentFuncLen) {
+				
+				continue
+			}else{
+				
+				let columnNameStartIdx = columnName.startIndex
+				let _start = columnName.index(columnNameStartIdx, offsetBy: 0)
+				let _end = columnName.index(columnNameStartIdx, offsetBy: currentFuncLen)
+				let columnNameRange = Range<String.Index>(_start..<_end)
+				let columnNameStripped = columnName.substring(with: columnNameRange)
+				
+				if(columnNameStripped == sqliteFunction) {
+					
+					statusRetval = true
+					break
+				}
+			}
+		}
+		
+		return statusRetval
 	}
 }

@@ -1,0 +1,110 @@
+# Makefile for IOSQLiteTest
+
+IOSQLiteTest_SWIFTC_FLAGS = $(DEBUG) $($(OS)_EXTRA_FLAGS) \
+	-module-cache-path $(MODULE_CACHE_PATH)/IOSQLiteTest -module-name IOSQLiteTest $($(OS)_SWIFTC_FLAGS) \
+	-I $(BUILD_ROOT_DIR)/lib -I $(BUILD_ROOT_DIR)/frameworks -F $(BUILD_ROOT_DIR)/frameworks
+
+IOSQLiteTest_Src = PrintResultAsTable.swift TestCreateTable.swift IOUnitTest.swift \
+	InsertTest.swift DeleteTest.swift UpdateTest.swift \
+	SelectTest1.swift SelectTest2.swift SelectTest3.swift SelectTest4.swift \
+	SelectTest5.swift SelectTest6.swift SelectTest7.swift SelectTest8.swift \
+	main.swift
+IOSQLiteTest_Src_Path = $(addprefix $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLiteTest/, $(IOSQLiteTest_Src))
+IOSQLiteTest_Obj = $(addsuffix .o, $(basename $(IOSQLiteTest_Src_Path)))
+IOSQLiteTest_Modules = $(addprefix $(MODULE_CACHE_PATH)/IOSQLiteTest/, $(addsuffix .swiftmodule, $(basename $(IOSQLiteTest_Src))))
+
+IOSQLiteTest_Darwin_SHLIB_PATH = -target x86_64-apple-macosx10.10 -I$(BUILD_ROOT_DIR)/lib -I$(BUILD_ROOT_DIR)/frameworks \
+	-F$(BUILD_ROOT_DIR)/frameworks -L$(BUILD_ROOT_DIR)/frameworks -L$(BUILD_ROOT_DIR)/lib -L$(SWIFT_libs)
+IOSQLiteTest_Linux_SHLIB_PATH = -target x86_64--linux-gnu -L$(SWIFT_libs) \
+		-L$(shell dirname $(shell dirname $(shell which swiftc)))/lib/swift_static/linux \
+		-L$(BUILD_ROOT_DIR)/lib -I/usr/include
+IOSQLiteTest_SHLIB_PATH = $(IOSQLiteTest_$(OS)_SHLIB_PATH)
+
+IOSQLiteTest_Darwin_LFLAGS = $(IOSQLiteTest_SHLIB_PATH) -arch x86_64 \
+	-isysroot $(SDK) \
+	-Xlinker -add_ast_path \
+	-stdlib=libc++ \
+	-Xlinker $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLiteTest.swiftmodule -single_module \
+	-Xlinker -rpath -Xlinker @executable_path/../Frameworks \
+	-Xlinker -rpath -Xlinker @loader_path/Frameworks \
+	-Xlinker -rpath -Xlinker @executable_path/../lib \
+	-Xlinker -rpath -Xlinker @executable_path/../frameworks \
+	-Xlinker -no_deduplicate \
+	-framework Foundation -framework IOSQLite
+IOSQLiteTest_Linux_LFLAGS = $(IOSQLiteTest_SHLIB_PATH) -static-libgcc -lc \
+	-lswiftCore -lswiftGlibc -ldl -lFoundation -licui18n -licuuc -licudata -lm -lpthread \
+	-lbsd -lIOSQLite \
+	-shared -flto -fuse-ld=gold \
+	-Xlinker -export-dynamic \
+	-Xlinker --exclude-libs -Xlinker ALL \
+	-Xlinker -rpath -Xlinker '$$ORIGIN/../lib/x86_64/IOSQLiteTest.swiftmodule' \
+	-Xlinker -rpath -Xlinker '$$ORIGIN/../lib' \
+	-Xlinker -rpath -Xlinker '/usr/lib64' \
+	-Xlinker -rpath -Xlinker '/usr/lib' \
+	-Xlinker -rpath -Xlinker '/usr/local/lib64' \
+	-Xlinker -rpath -Xlinker '/usr/local/lib' \
+	$(SWIFT_libs)/x86_64/swift_end.o
+IOSQLiteTest_LFLAGS = $(IOSQLiteTest_$(OS)_LFLAGS)
+
+IOSQLiteTest-install:
+	@cp $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLiteTest/IOSQLiteTest.bin $(BUILD_ROOT_DIR)/bin/IOSQLiteTest
+	@chmod +x $(BUILD_ROOT_DIR)/bin/IOSQLiteTest
+	@cp $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLiteTest/TestDatabase.db $(BUILD_ROOT_DIR)/test/TestDatabase.db
+
+Copy_Darwin_dependencies:
+	@cp -r $(SWIFT_libs)/libswiftCore.dylib $(BUILD_ROOT_DIR)/lib
+	@cp -r $(SWIFT_libs)/libswiftCoreGraphics.dylib $(BUILD_ROOT_DIR)/lib
+	@cp -r $(SWIFT_libs)/libswiftDarwin.dylib $(BUILD_ROOT_DIR)/lib
+	@cp -r $(SWIFT_libs)/libswiftDispatch.dylib $(BUILD_ROOT_DIR)/lib
+	@cp -r $(SWIFT_libs)/libswiftFoundation.dylib $(BUILD_ROOT_DIR)/lib
+	@cp -r $(SWIFT_libs)/libswiftIOKit.dylib $(BUILD_ROOT_DIR)/lib
+	@cp -r $(SWIFT_libs)/libswiftObjectiveC.dylib $(BUILD_ROOT_DIR)/lib
+	@cp -r $(SWIFT_libs)/libswiftXPC.dylib $(BUILD_ROOT_DIR)/lib 2>/dev/null || :
+	@cp -r $(SWIFT_libs)/libswiftos.dylib $(BUILD_ROOT_DIR)/lib 2>/dev/null || :
+	
+Copy_Linux_dependencies:
+	@cp -r $(SWIFT_libs)/libswiftCore.so $(BUILD_ROOT_DIR)/lib
+	@cp -r $(SWIFT_libs)/libswiftGlibc.so $(BUILD_ROOT_DIR)/lib
+	@cp -r $(SWIFT_libs)/libFoundation.so $(BUILD_ROOT_DIR)/lib
+	@cp -Hr /usr/lib/x86_64-linux-gnu/libicui18n.so $(BUILD_ROOT_DIR)/lib/
+	@cp -Hr /usr/lib/x86_64-linux-gnu/libicuuc.so $(BUILD_ROOT_DIR)/lib/
+	@cp -Hr /usr/lib/x86_64-linux-gnu/libicudata.so $(BUILD_ROOT_DIR)/lib/
+	@ln -sf $(BUILD_ROOT_DIR)/lib/libicui18n.so $(BUILD_ROOT_DIR)/lib/libicui18n.so.55
+	@ln -sf $(BUILD_ROOT_DIR)/lib/libicui18n.so $(BUILD_ROOT_DIR)/lib/libicui18n.so.52
+	@ln -sf $(BUILD_ROOT_DIR)/lib/libicuuc.so $(BUILD_ROOT_DIR)/lib/libicuuc.so.55
+	@ln -sf $(BUILD_ROOT_DIR)/lib/libicuuc.so $(BUILD_ROOT_DIR)/lib/libicuuc.so.52
+	@ln -sf $(BUILD_ROOT_DIR)/lib/libicudata.so $(BUILD_ROOT_DIR)/lib/libicudata.so.55
+	@ln -sf $(BUILD_ROOT_DIR)/lib/libicudata.so $(BUILD_ROOT_DIR)/lib/libicudata.so.52
+
+IOSQLiteTest-modulecache: Copy_$(OS)_dependencies
+	@mkdir -p $(BUILD_ROOT_DIR)/bin
+	@mkdir -p $(BUILD_ROOT_DIR)/test
+	@mkdir -p $(MODULE_CACHE_PATH)/IOSQLiteTest
+
+IOSQLiteTest: IOSQLiteTest-modulecache IOSQLiteTest.bin IOSQLiteTest-install
+
+IOSQLiteTest.bin: $(IOSQLiteTest_Obj) IOSQLiteTest.swiftmodule
+	$(CLANG) $(IOSQLiteTest_Obj) $(IOSQLiteTest_LFLAGS) -o $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLiteTest/IOSQLiteTest.bin
+
+IOSQLiteTest.swiftmodule:
+	$(SWIFT) -frontend $(IOSQLiteTest_SWIFTC_FLAGS) -emit-module $(IOSQLiteTest_Modules) -parse-as-library \
+	-emit-module-doc-path $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLiteTest/IOSQLiteTest.swiftdoc \
+	-o $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLiteTest/IOSQLiteTest.swiftmodule
+
+IOSQLiteTest-clean:
+	@rm -rf $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLiteTest/*.o $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLiteTest/*.so \
+	$(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLiteTest/*.bin \
+	$(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLiteTest/*.swiftmodule $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLiteTest/*.swiftdoc \
+	$(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLiteTest/*.d $(MODULE_CACHE_PATH)/IOSQLiteTest \
+	$(BUILD_ROOT_DIR)/lib/IOSQLiteTest* $(BUILD_ROOT_DIR)/lib/libIOSQLiteTest* $(BUILD_ROOT_DIR)/lib/x86_64/IOSQLiteTest* \
+	$(BUILD_ROOT_DIR)/IOSQLiteTest* \
+	$(BUILD_ROOT_DIR)/TestDatabase.db
+	
+$(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLiteTest/%.o : $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLiteTest/%.swift
+	$(SWIFT) -frontend -c $(subst $<,,$(IOSQLiteTest_Src_Path)) -primary-file $< \
+	-emit-module-path $(MODULE_CACHE_PATH)/IOSQLiteTest/$(subst .o,.swiftmodule,$(shell basename $@)) \
+	-emit-module-doc-path $(MODULE_CACHE_PATH)/IOSQLiteTest/$(subst .o,.swiftdoc,$(shell basename $@)) \
+	-emit-dependencies-path $(MODULE_CACHE_PATH)/IOSQLiteTest/$(subst .swift,.d,$(shell basename $<)) \
+	-emit-reference-dependencies-path $(MODULE_CACHE_PATH)/IOSQLiteTest/$(subst .swift,.swiftdeps,$(shell basename $<)) \
+	$(IOSQLiteTest_SWIFTC_FLAGS) \
+	-o $@

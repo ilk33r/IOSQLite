@@ -78,6 +78,34 @@ public struct IOSQLiteResult {
 			return nil
 		}
 	}
+	
+	public func isNull(rowIdx: Int, columnIdx: Int) -> Bool {
+		
+		let rowData = self._allData[rowIdx]
+		let currentColumnData = rowData[columnIdx]
+		
+		if(currentColumnData == "NULL") {
+			return true
+		}else{
+			return false
+		}
+	}
+	
+	public func getDateVal(rowIdx: Int, columnIdx: Int) -> Date {
+		
+		let rowData = self._allData[rowIdx]
+		let currentColumnData = rowData[columnIdx]
+		
+		let dateFormatter = DateFormatter()
+		dateFormatter.dateFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'"
+		if let dateValue = dateFormatter.date(from: currentColumnData) {
+			
+			return dateValue
+		}else{
+			
+			return Date()
+		}
+	}
 }
 
 internal func SqlExecCallback(queryId: UnsafeMutableRawPointer?, argc: Int32, argv: UnsafeMutablePointer<UnsafeMutablePointer<Int8>?>?, azColName: UnsafeMutablePointer<UnsafeMutablePointer<Int8>?>?) -> Int32 {

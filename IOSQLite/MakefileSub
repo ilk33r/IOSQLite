@@ -1,0 +1,96 @@
+# Makefile for IOSQLite
+
+IOSQLite_SWIFTC_FLAGS = $(DEBUG) $($(OS)_EXTRA_FLAGS) \
+	-module-cache-path $(MODULE_CACHE_PATH)/IOSQLite -module-name IOSQLite $($(OS)_SWIFTC_FLAGS) \
+	-I $(BUILD_ROOT_DIR)/lib -I $(BUILD_ROOT_DIR)/frameworks -F $(BUILD_ROOT_DIR)/frameworks \
+	-import-objc-header $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLite/IOSQL-Bridging-Header.h
+
+IOSQLite_Src = IOSQLiteError.swift IOSQLiteActiveRecordTypes.swift IOSQLiteActiveRecord.swift IOSQLiteResult.swift IOSQLiteEntity.swift \
+	IOSQLite.swift
+IOSQLite_Src_Path = $(addprefix $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLite/, $(IOSQLite_Src))
+IOSQLite_Obj = $(addsuffix .o, $(basename $(IOSQLite_Src_Path)))
+IOSQLite_Modules = $(addprefix $(MODULE_CACHE_PATH)/IOSQLite/, $(addsuffix .swiftmodule, $(basename $(IOSQLite_Src))))
+
+IOSQLite_Darwin_SHLIB_PATH = -target x86_64-apple-macosx10.10 -I$(BUILD_ROOT_DIR)/lib -I$(BUILD_ROOT_DIR)/frameworks \
+	-F$(BUILD_ROOT_DIR)/frameworks -L$(BUILD_ROOT_DIR)/frameworks -L$(BUILD_ROOT_DIR)/lib -L$(SWIFT_libs)
+IOSQLite_Linux_SHLIB_PATH = -target x86_64--linux-gnu -L$(SWIFT_libs) \
+		-L$(shell dirname $(shell dirname $(shell which swiftc)))/lib/swift_static/linux \
+		-L$(BUILD_ROOT_DIR)/lib -I/usr/include
+IOSQLite_SHLIB_PATH = $(IOSQLite_$(OS)_SHLIB_PATH)
+
+IOSQLite_Darwin_LFLAGS = $(IOSQLite_SHLIB_PATH) -arch x86_64 -dynamiclib \
+	-isysroot $(SDK) -lsqlite3 \
+	-install_name @executable_path/../frameworks/IOSQLite.framework/Versions/A/IOSQLite \
+	-Xlinker -add_ast_path \
+	-stdlib=libc++ \
+	-Xlinker $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLite.swiftmodule -single_module \
+	-Xlinker -rpath -Xlinker @executable_path/../Frameworks \
+	-Xlinker -rpath -Xlinker @loader_path/Frameworks \
+	-Xlinker -rpath -Xlinker @executable_path/../lib \
+	-Xlinker -rpath -Xlinker @executable_path/../frameworks \
+	-compatibility_version 1 -current_version 1 \
+	-framework Foundation
+IOSQLite_Linux_LFLAGS = $(IOSQLite_SHLIB_PATH) -lswiftCore -lswiftGlibc -ldl -lFoundation -lbsd -lsqlite3 \
+	-shared -flto -fuse-ld=gold \
+	-Xlinker -export-dynamic \
+	-Xlinker --exclude-libs -Xlinker ALL \
+	-Xlinker -rpath -Xlinker '$$ORIGIN/../lib/x86_64/IOSQLite.swiftmodule' \
+	-Xlinker -rpath -Xlinker '$$ORIGIN/../lib' \
+	-Xlinker -rpath -Xlinker '/usr/lib64' \
+	-Xlinker -rpath -Xlinker '/usr/lib' \
+	-Xlinker -rpath -Xlinker '/usr/local/lib64' \
+	-Xlinker -rpath -Xlinker '/usr/local/lib' \
+	$(SWIFT_libs)/x86_64/swift_end.o
+IOSQLite_LFLAGS = $(IOSQLite_$(OS)_LFLAGS)
+
+IOSQLite-install:
+	@cp $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLite/IOSQLite.so $(BUILD_ROOT_DIR)/lib/libIOSQLite.so
+	@cp $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLite/IOSQLite.swiftmodule $(BUILD_ROOT_DIR)/lib/x86_64
+	@cp $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLite/IOSQLite.swiftdoc $(BUILD_ROOT_DIR)/lib/x86_64
+	@chmod +x $(BUILD_ROOT_DIR)/lib/libIOSQLite.so
+	@cp $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLite/IOSQLite.so $(BUILD_ROOT_DIR)/frameworks/IOSQLite.framework/Versions/A/IOSQLite
+	@cp $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLite/IOSQLite.swiftdoc $(BUILD_ROOT_DIR)/frameworks/IOSQLite.framework/Versions/A/Modules/IOSQLite.swiftmodule/x86_64.swiftdoc
+	@cp $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLite/IOSQLite.swiftmodule $(BUILD_ROOT_DIR)/frameworks/IOSQLite.framework/Versions/A/Modules/IOSQLite.swiftmodule/x86_64.swiftmodule
+	@cp $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLite/module.modulemap $(BUILD_ROOT_DIR)/frameworks/IOSQLite.framework/Versions/A/Modules
+	@cp $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLite/Info.plist $(BUILD_ROOT_DIR)/frameworks/IOSQLite.framework/Versions/A/Resources
+
+IOSQLite-modulecache:
+	@mkdir -p $(MODULE_CACHE_PATH)/IOSQLite
+	@mkdir -p $(BUILD_ROOT_DIR)/frameworks/IOSQLite.framework
+	@mkdir -p $(BUILD_ROOT_DIR)/frameworks/IOSQLite.framework/Versions
+	@mkdir -p $(BUILD_ROOT_DIR)/frameworks/IOSQLite.framework/Versions/A
+	@mkdir -p $(BUILD_ROOT_DIR)/frameworks/IOSQLite.framework/Versions/A/Modules
+	@mkdir -p $(BUILD_ROOT_DIR)/frameworks/IOSQLite.framework/Versions/A/Headers
+	@mkdir -p $(BUILD_ROOT_DIR)/frameworks/IOSQLite.framework/Versions/A/Modules/IOSQLite.swiftmodule
+	@mkdir -p $(BUILD_ROOT_DIR)/frameworks/IOSQLite.framework/Versions/A/Resources
+	@ln -sf Versions/Current/Modules $(BUILD_ROOT_DIR)/frameworks/IOSQLite.framework/Modules
+	@ln -sf A $(BUILD_ROOT_DIR)/frameworks/IOSQLite.framework/Versions/Current
+	@ln -sf Versions/Current/Headers $(BUILD_ROOT_DIR)/frameworks/IOSQLite.framework/Headers
+	@ln -sf Versions/Current/IOSQLite $(BUILD_ROOT_DIR)/frameworks/IOSQLite.framework/IOSQLite
+	@ln -sf Versions/Current/Resources $(BUILD_ROOT_DIR)/frameworks/IOSQLite.framework/Resources
+
+IOSQLite: IOSQLite-modulecache IOSQLite.so IOSQLite-install
+
+IOSQLite.so: $(IOSQLite_Obj) IOSQLite.swiftmodule
+	$(CLANG) $(IOSQLite_Obj) $(IOSQLite_LFLAGS) -o $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLite/IOSQLite.so
+
+IOSQLite.swiftmodule:
+	$(SWIFT) -frontend $(IOSQLite_SWIFTC_FLAGS) -emit-module $(IOSQLite_Modules) -parse-as-library \
+	-emit-module-doc-path $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLite/IOSQLite.swiftdoc \
+	-o $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLite/IOSQLite.swiftmodule
+
+IOSQLite-clean:
+	@rm -rf $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLite/*.o $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLite/*.so \
+	$(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLite/*.swiftmodule $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLite/*.swiftdoc \
+	$(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLite/*.d $(MODULE_CACHE_PATH)/IOSQLite \
+	$(BUILD_ROOT_DIR)/lib/IOSQLite* $(BUILD_ROOT_DIR)/lib/libIOSQLite* $(BUILD_ROOT_DIR)/lib/x86_64/IOSQLite* \
+	$(BUILD_ROOT_DIR)/frameworks/IOSQLite*
+	
+$(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLite/%.o : $(PACKAGE_ROOT_DIR)/IOSQLite/IOSQLite/%.swift
+	$(SWIFT) -frontend -c $(subst $<,,$(IOSQLite_Src_Path)) -primary-file $< \
+	-emit-module-path $(MODULE_CACHE_PATH)/IOSQLite/$(subst .o,.swiftmodule,$(shell basename $@)) \
+	-emit-module-doc-path $(MODULE_CACHE_PATH)/IOSQLite/$(subst .o,.swiftdoc,$(shell basename $@)) \
+	-emit-dependencies-path $(MODULE_CACHE_PATH)/IOSQLite/$(subst .swift,.d,$(shell basename $<)) \
+	-emit-reference-dependencies-path $(MODULE_CACHE_PATH)/IOSQLite/$(subst .swift,.swiftdeps,$(shell basename $<)) \
+	$(IOSQLite_SWIFTC_FLAGS) \
+	-o $@
