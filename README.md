@@ -1,6 +1,13 @@
 # IOSQLite
 SQLite framework for iOS, OSX and Linux written with swift.
 
+|| **Build** |
+|---|---|
+|**macOS Xcode 7.3**       |[![Build Status](https://travis-ci.org/ilk33r/IOSQLite.svg?branch=master)](https://travis-ci.org/ilk33r/IOSQLite)|
+|**macOS Xcode 8**         |[![Build Status](https://travis-ci.org/ilk33r/IOSQLite.svg?branch=master)](https://travis-ci.org/ilk33r/IOSQLite)|
+|**Ubuntu 14.04**          |[![Build Status](https://travis-ci.org/ilk33r/IOSQLite.svg?branch=master)](https://travis-ci.org/ilk33r/IOSQLite)|
+|**Ubuntu 15.10**          |[![Build Status](https://travis-ci.org/ilk33r/IOSQLite.svg?branch=master)](https://travis-ci.org/ilk33r/IOSQLite)|
+
 ### Instructions
 
 * **Build**
