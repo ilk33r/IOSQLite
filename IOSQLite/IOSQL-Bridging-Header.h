@@ -22,6 +22,7 @@
 #endif
 
 #ifdef Linux
+#	import <sqlite3.h>
 #endif
 
 #ifdef Darwin
