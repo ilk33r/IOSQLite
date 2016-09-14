@@ -34,7 +34,7 @@ IOSQLiteTest_Darwin_LFLAGS = $(IOSQLiteTest_SHLIB_PATH) -arch x86_64 \
 IOSQLiteTest_Linux_LFLAGS = $(IOSQLiteTest_SHLIB_PATH) -static-libgcc -lc \
 	-lswiftCore -lswiftGlibc -ldl -lFoundation -licui18n -licuuc -licudata -lm -lpthread \
 	-lbsd -lIOSQLite \
-	-shared -flto -fuse-ld=gold \
+	-flto -fuse-ld=gold \
 	-Xlinker -export-dynamic \
 	-Xlinker --exclude-libs -Xlinker ALL \
 	-Xlinker -rpath -Xlinker '$$ORIGIN/../lib/x86_64/IOSQLiteTest.swiftmodule' \
