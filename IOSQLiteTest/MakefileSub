@@ -66,6 +66,7 @@ Copy_Linux_dependencies:
 	@cp -r $(SWIFT_libs)/libswiftCore.so $(BUILD_ROOT_DIR)/lib
 	@cp -r $(SWIFT_libs)/libswiftGlibc.so $(BUILD_ROOT_DIR)/lib
 	@cp -r $(SWIFT_libs)/libFoundation.so $(BUILD_ROOT_DIR)/lib
+	@cp -r $(SWIFT_libs)/libdispatch.so $(BUILD_ROOT_DIR)/lib
 	@cp -Hr /usr/lib/x86_64-linux-gnu/libicui18n.so $(BUILD_ROOT_DIR)/lib/
 	@cp -Hr /usr/lib/x86_64-linux-gnu/libicuuc.so $(BUILD_ROOT_DIR)/lib/
 	@cp -Hr /usr/lib/x86_64-linux-gnu/libicudata.so $(BUILD_ROOT_DIR)/lib/
