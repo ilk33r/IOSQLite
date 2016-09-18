@@ -24,9 +24,6 @@ matrix:
       before_install:
         - ./Travis/DownloadDocker.sh
     - os: osx
-      osx_image: xcode7.3
-      env: TRAVIS_IMAGE=OSX SWIFT_VERSION=2.2 TEST_BRANCH=xcode_7.3
-    - os: osx
       osx_image: xcode8
       env: TRAVIS_IMAGE=OSX SWIFT_VERSION=3 TEST_BRANCH=xcode_8
 script:
