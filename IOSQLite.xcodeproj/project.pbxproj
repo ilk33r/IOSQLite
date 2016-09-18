@@ -81,6 +81,10 @@
 		DE8EDBFB1D8344A8007B83DB /* SelectTest1.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectTest1.swift; sourceTree = "<group>"; };
 		DE8EDBFD1D834545007B83DB /* SelectTest2.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectTest2.swift; sourceTree = "<group>"; };
 		DE8EDBFF1D8345B2007B83DB /* SelectTest3.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelectTest3.swift; sourceTree = "<group>"; };
+		DEA8C3A21D8E8609001EFC7A /* Build.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = Build.sh; sourceTree = "<group>"; };
+		DEA8C3A31D8E8609001EFC7A /* DownloadDocker.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = DownloadDocker.sh; sourceTree = "<group>"; };
+		DEA8C3A61D8EB3D6001EFC7A /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		DEA8C3A71D8EB3D6001EFC7A /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		DEF6D0831D82989A000AE150 /* PrintResultAsTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PrintResultAsTable.swift; sourceTree = "<group>"; };
 		DEF6D0851D82B93B000AE150 /* IOUnitTest.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IOUnitTest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -131,8 +135,11 @@
 		DE4A3D091D7FB82C006AB97E = {
 			isa = PBXGroup;
 			children = (
+				DEA8C3A61D8EB3D6001EFC7A /* README.md */,
+				DEA8C3A71D8EB3D6001EFC7A /* Makefile */,
 				DE4A3D151D7FB82C006AB97E /* IOSQLite */,
 				DE1B5E601D81BD6700B92E5C /* IOSQLiteTest */,
+				DEA8C3A11D8E8609001EFC7A /* Travis */,
 				DE4A3D141D7FB82C006AB97E /* Products */,
 				DE4A3D281D7FB97F006AB97E /* Frameworks */,
 			);
@@ -169,6 +176,15 @@
 				DE4A3D291D7FB97F006AB97E /* Foundation.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		DEA8C3A11D8E8609001EFC7A /* Travis */ = {
+			isa = PBXGroup;
+			children = (
+				DEA8C3A21D8E8609001EFC7A /* Build.sh */,
+				DEA8C3A31D8E8609001EFC7A /* DownloadDocker.sh */,
+			);
+			path = Travis;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
